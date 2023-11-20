@@ -6,6 +6,7 @@ import 'package:phone_catalog/models/brand.dart';
 
 import '../env/env.dart';
 import '../models/model.dart';
+import '../models/specifications/specifications.dart';
 
 class RapidPhoneCatalogService {
   final Dio _dio = Dio();
@@ -25,13 +26,22 @@ class RapidPhoneCatalogService {
     return jsonList.map((json) => Brand.fromJson(json)).toList();
   }
 
-  Future<List<Model>> getModelsByBrand(String modelName) async {
+  Future<List<Model>> getModelsByBrand(String brandName) async {
     const endpoint = '/get-models-by-brandname';
 
-    Response modelsResponse = await _dio.get('${Constants.baseUrl}$endpoint/$modelName',
+    Response modelsResponse = await _dio.get('${Constants.baseUrl}$endpoint/$brandName',
     options: Options(headers: _headers));
 
     List<dynamic> modelsJsonList = modelsResponse.data;
     return modelsJsonList.map((json) => Model.fromJson(json)).toList();
+  }
+
+  Future<Specifications> getSpecifications(String brandName, String modelName) async {
+    const endpoint = '/get-specifications-by-brandname-modelname';
+    
+    Response specificationsResponse = await _dio.get('${Constants.baseUrl}$endpoint/$brandName/$modelName',
+    options: Options(headers: _headers));
+    
+    return Specifications.fromJson(json.decode(specificationsResponse.data));
   }
 }
